@@ -85,15 +85,17 @@ resource "google_compute_network" "vpc-network" {
 resource "google_compute_subnetwork" "subnet_1" {
   name          = "vpc-subnet-1"
   network       = google_compute_network.vpc-network.id
-  ip_cidr_range = "10.0.0.0/16"
-  region        = "us-central1"
+  ip_cidr_range = "192.168.1.0/24"
+  region        = "us-east1"
+  project       = google_project.host_project.project_id
 }
 
 resource "google_compute_subnetwork" "subnet_2" {
   name          = "vpc-subnet-2"
   network       = google_compute_network.vpc-network.id
-  ip_cidr_range = "10.0.0.0/16"
-  region        = "us-central1"
+  ip_cidr_range = "192.168.25.0/24"
+  region        = "us-east1"
+  project       = google_project.host_project.project_id
 }
 
 #7. Setup the Router
@@ -102,6 +104,10 @@ resource "google_compute_router" "vpc_router" {
   region  = google_compute_subnetwork.subnet_1.region
   network = google_compute_network.vpc-network.id
   project = google_project.host_project.project_id
+
+  bgp {
+    asn = 64514
+  }
 }
 
 #8. Setup the Cloud NAT
@@ -111,6 +117,7 @@ resource "google_compute_router_nat" "vpc_nat" {
   region                             = google_compute_router.vpc_router.region
   nat_ip_allocate_option             = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+  project = google_project.host_project.project_id
 
   log_config {
     enable = true
