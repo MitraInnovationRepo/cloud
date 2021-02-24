@@ -170,3 +170,17 @@ resource "google_project_iam_member" "project_member_qa" {
   role    = "roles/editor"
   member  = "user:qa@mitralabs.co.uk"
 }
+
+#11. Add permissions to the Network Admin - Host Project Owner and Shared VPC Network Admin
+resource "google_project_iam_member" "project_member_host" {
+  project = google_project.host_project.project_id
+  role    = "roles/owner"
+  member  = "user:networkadmin@mitralabs.co.uk"
+}
+
+resource "google_organization_iam_member" "organization_vpc_admin" {
+  org_id  = var.org_id
+  role    = "roles/compute.xpnAdmin"
+  member  = "user:networkadmin@mitralabs.co.uk"
+}
+
