@@ -140,3 +140,33 @@ resource "google_compute_firewall" "vpc_network_firewall" {
     ports    = ["22", "80"]
   }
 }
+
+#10. IAM Binding - Set Permission to the Subnet 
+resource "google_compute_subnetwork_iam_member" "subnet_member_dev" {
+  project = google_project.host_project.project_id
+  region  = "us-east1"
+  subnetwork = google_compute_subnetwork.subnet_1.name
+  role = "roles/compute.networkUser"
+  member = "user:dev@mitralabs.co.uk"
+}
+
+resource "google_compute_subnetwork_iam_member" "subnet_member_qa" {
+  project = google_project.host_project.project_id
+  region  = "us-east1"
+  subnetwork = google_compute_subnetwork.subnet_2.name
+  role = "roles/compute.networkUser"
+  member = "user:qa@mitralabs.co.uk"
+}
+
+#10. IAM Binding - Set Permission to the Project 
+resource "google_project_iam_member" "project_member_dev" {
+  project = google_project.service_project_dev.project_id
+  role    = "roles/editor"
+  member  = "user:dev@mitralabs.co.uk"
+}
+
+resource "google_project_iam_member" "project_member_qa" {
+  project = google_project.service_project_qa.project_id
+  role    = "roles/editor"
+  member  = "user:qa@mitralabs.co.uk"
+}
