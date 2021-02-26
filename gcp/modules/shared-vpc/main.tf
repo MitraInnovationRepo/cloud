@@ -67,17 +67,18 @@ resource "google_compute_shared_vpc_service_project" "vpc_service_project_qa" {
 
 #5. Create the VPC Network with subnets defined
 resource "google_compute_network" "vpc-network" {
-  name                    = var.vpc_network.name
-  auto_create_subnetworks = "false"
-  project                 = google_compute_shared_vpc_host_project.vpc_host_project.project
-  routing_mode            = var.vpc_network.routing_mode
+  name                            = var.vpc_network.name
+  auto_create_subnetworks         = "false"
+  project                         = google_compute_shared_vpc_host_project.vpc_host_project.project
+  routing_mode                    = var.vpc_network.routing_mode
+  delete_default_routes_on_create = true
   depends_on = [
     google_compute_shared_vpc_service_project.vpc_service_project_dev,
     google_compute_shared_vpc_service_project.vpc_service_project_qa
   ]
 }
 
-#6. Setup the Subnets
+#6. Setup the Private Subnets
 resource "google_compute_subnetwork" "subnet_1" {
   name          = var.subnet_1.name
   network       = google_compute_network.vpc-network.id
@@ -91,6 +92,23 @@ resource "google_compute_subnetwork" "subnet_2" {
   network       = google_compute_network.vpc-network.id
   ip_cidr_range = var.subnet_2.cidr
   region        = var.subnet_2.region
+  project       = google_project.host_project.project_id
+}
+
+#Setup Public Networks
+resource "google_compute_subnetwork" "subnet_3" {
+  name          = var.subnet_3.name
+  network       = google_compute_network.vpc-network.id
+  ip_cidr_range = var.subnet_3.cidr
+  region        = var.subnet_3.region
+  project       = google_project.host_project.project_id
+}
+
+resource "google_compute_subnetwork" "subnet_4" {
+  name          = var.subnet_4.name
+  network       = google_compute_network.vpc-network.id
+  ip_cidr_range = var.subnet_4.cidr
+  region        = var.subnet_4.region
   project       = google_project.host_project.project_id
 }
 
@@ -162,6 +180,22 @@ resource "google_compute_subnetwork_iam_member" "subnet_member_qa" {
   member     = var.subnetwork_iam_member.qa
 }
 
+resource "google_compute_subnetwork_iam_member" "subnet_public_member_dev" {
+  project    = google_project.host_project.project_id
+  region     = google_compute_subnetwork.subnet_3.region
+  subnetwork = google_compute_subnetwork.subnet_3.name
+  role       = var.subnetwork_public_iam_member.role
+  member     = var.subnetwork_public_iam_member.dev
+}
+
+resource "google_compute_subnetwork_iam_member" "subnet_public_member_qa" {
+  project    = google_project.host_project.project_id
+  region     = google_compute_subnetwork.subnet_4.region
+  subnetwork = google_compute_subnetwork.subnet_4.name
+  role       = var.subnetwork_public_iam_member.role
+  member     = var.subnetwork_public_iam_member.qa
+}
+
 #10. IAM Binding - Set Permission to the Project 
 resource "google_project_iam_member" "project_member_dev" {
   project = google_project.service_project_dev.project_id
@@ -212,4 +246,25 @@ resource "google_compute_instance" "service_project_dev_vm" {
   depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev]
 }
 
-#13. Create a public subnet inside the VPC shared network
+#13. Setup a VM inside one of the Developers Project - Public Subnet
+resource "google_compute_instance" "service_project_public_dev_vm" {
+  name         = var.google_compute_instance_public_vm_dev.name
+  project      = google_project.service_project_dev.project_id
+  machine_type = var.google_compute_instance_public_vm_dev.machinetype
+  zone         = var.google_compute_instance_public_vm_dev.zone
+
+  boot_disk {
+    initialize_params {
+      image = var.google_compute_instance_public_vm_dev.image
+    }
+  }
+
+  metadata_startup_script = file(var.google_compute_instance_public_vm_dev.startupscript)
+
+  network_interface {
+    network    = google_compute_network.vpc-network.self_link
+    subnetwork = google_compute_subnetwork.subnet_3.self_link
+  }
+
+  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev]
+}

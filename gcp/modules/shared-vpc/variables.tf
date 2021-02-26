@@ -48,6 +48,22 @@ variable "subnet_2" {
   })
 }
 
+variable "subnet_3" {
+  type = object({
+    name   = string
+    cidr   = string
+    region = string
+  })
+}
+
+variable "subnet_4" {
+  type = object({
+    name   = string
+    cidr   = string
+    region = string
+  })
+}
+
 variable "vpc_router" {
   type = object({
     name = string
@@ -100,4 +116,21 @@ variable "google_compute_instance_vm_dev" {
   })
 }
 
+variable "subnetwork_public_iam_member" {
+  type = object({
+    dev    = string
+    qa     = string
+    role   = string
+  })
+}
 
+
+variable "google_compute_instance_public_vm_dev" {
+  type = object({
+    name          = string
+    machinetype   = string
+    zone          = string
+    image         = string
+    startupscript = string
+  })
+}

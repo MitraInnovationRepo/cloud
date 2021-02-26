@@ -33,9 +33,22 @@ subnet_1 = {
 
 subnet_2 = {
     name    = "vpc-subnet-2"
-    cidr = "192.168.25.0/24"
+    cidr = "192.168.5.0/24"
     region = "us-east1"
 }
+
+subnet_3 = {
+    name    = "vpc-subnet-3"
+    cidr = "192.168.10.0/24"
+    region = "us-east1"
+}
+
+subnet_4 = {
+    name    = "vpc-subnet-4"
+    cidr = "192.168.15.0/24"
+    region = "us-east1"
+}
+
 
 vpc_router = {
     name = "vpc-router"
@@ -73,4 +86,18 @@ google_compute_instance_vm_dev = {
     zone          = "us-east1-b"
     image         = "debian-cloud/debian-9"
     startupscript = "../modules/shared-vpc/vm-scripts-dev.sh"
+}
+
+subnetwork_public_iam_member = {
+    dev    = "user:dev@mitralabs.co.uk"
+    qa     = "user:qa@mitralabs.co.uk"
+    role   = "roles/compute.networkUser"
+}
+
+google_compute_instance_public_vm_dev = {
+    name          = "instance-public-dev"
+    machinetype   = "e2-micro"
+    zone          = "us-east1-b"
+    image         = "debian-cloud/debian-9"
+    startupscript = "../modules/shared-vpc/vm-scripts-public-dev.sh"
 }
