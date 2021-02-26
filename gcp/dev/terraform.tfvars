@@ -66,3 +66,11 @@ organization_iam_member = {
     role   = "roles/compute.xpnAdmin"
     member  = "user:networkadmin@mitralabs.co.uk"
 }
+
+google_compute_instance_vm_dev = {
+    name          = "instance-dev"
+    machinetype   = "e2-micro"
+    zone          = "us-east1-b"
+    image         = "debian-cloud/debian-9"
+    startupscript = "../modules/shared-vpc/vm-scripts-dev.sh"
+}

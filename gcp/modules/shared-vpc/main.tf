@@ -179,3 +179,29 @@ resource "google_organization_iam_member" "organization_vpc_admin" {
   role   = var.organization_iam_member.role
   member = var.organization_iam_member.member
 }
+
+
+#12. Setup a VM inside one of the Developers Project
+resource "google_compute_instance" "service_project_dev_vm" {
+  name         = var.google_compute_instance_vm_dev.name
+  project      = google_project.service_project_dev.project_id
+  machine_type = var.google_compute_instance_vm_dev.machinetype
+  zone         = var.google_compute_instance_vm_dev.zone
+
+  boot_disk {
+    initialize_params {
+      image = var.google_compute_instance_vm_dev.image
+    }
+  }
+
+  metadata_startup_script = file(var.google_compute_instance_vm_dev.startupscript)
+
+  network_interface {
+    network = google_compute_network.vpc-network.self_link
+    subnetwork = google_compute_subnetwork.subnet_1.self_link
+  }
+
+  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev]
+}
+
+#13. Create a public subnet inside the VPC shared network

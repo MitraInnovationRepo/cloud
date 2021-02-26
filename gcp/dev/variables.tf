@@ -90,3 +90,13 @@ variable "organization_iam_member" {
     member  = string
   })
 }
+
+variable "google_compute_instance_vm_dev" {
+  type = object({
+    name          = string
+    machinetype   = string
+    zone          = string
+    image         = string
+    startupscript = string
+  })
+}
