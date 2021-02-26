@@ -54,7 +54,7 @@ subnetwork_iam_member = {
 project_iam_member = {
     dev    = "user:dev@mitralabs.co.uk"
     qa     = "user:qa@mitralabs.co.uk"
-    role   = "roles/editor"
+    role   = "roles/owner"
 }
 
 host_project_iam_member = {

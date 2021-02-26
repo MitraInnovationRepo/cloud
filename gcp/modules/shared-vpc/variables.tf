@@ -99,3 +99,5 @@ variable "google_compute_instance_vm_dev" {
     startupscript = string
   })
 }
+
+

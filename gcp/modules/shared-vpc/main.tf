@@ -112,8 +112,16 @@ resource "google_compute_router_nat" "vpc_nat" {
   router                             = google_compute_router.vpc_router.name
   region                             = google_compute_router.vpc_router.region
   nat_ip_allocate_option             = "AUTO_ONLY"
-  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-  project                            = google_project.host_project.project_id
+  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
+  /* subnetwork {
+    name                    = google_compute_subnetwork.subnet_2.id
+    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  } */
+  subnetwork {
+    name                    = google_compute_subnetwork.subnet_1.id
+    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  }
+  project = google_project.host_project.project_id
 
   log_config {
     enable = true
@@ -197,7 +205,7 @@ resource "google_compute_instance" "service_project_dev_vm" {
   metadata_startup_script = file(var.google_compute_instance_vm_dev.startupscript)
 
   network_interface {
-    network = google_compute_network.vpc-network.self_link
+    network    = google_compute_network.vpc-network.self_link
     subnetwork = google_compute_subnetwork.subnet_1.self_link
   }
 
