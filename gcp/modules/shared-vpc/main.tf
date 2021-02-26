@@ -161,6 +161,9 @@ resource "google_compute_firewall" "vpc_network_firewall" {
     protocol = "tcp"
     ports    = ["22", "80"]
   }
+
+  source_ranges = ["0.0.0.0/0"]
+
 }
 
 #10. IAM Binding - Set Permission to the Subnet 
@@ -264,6 +267,10 @@ resource "google_compute_instance" "service_project_public_dev_vm" {
   network_interface {
     network    = google_compute_network.vpc-network.self_link
     subnetwork = google_compute_subnetwork.subnet_3.self_link
+    
+    access_config {
+      // Ephemeral IP
+    }
   }
 
   depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev]
