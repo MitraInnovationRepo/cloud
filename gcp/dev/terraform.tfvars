@@ -10,6 +10,8 @@ host_project          = {
 
 enable_compute_api    = "compute.googleapis.com"
 
+enable_dns_api    = "dns.googleapis.com"
+
 service_project_dev   = {
         name = "ADL - VPCServiceProjectDev"
         id = "adl-vpcserviceprojectdev-init"
@@ -100,4 +102,13 @@ google_compute_instance_public_vm_dev = {
     zone          = "us-east1-b"
     image         = "debian-cloud/debian-9"
     startupscript = "../modules/shared-vpc/vm-scripts-public-dev.sh"
+}
+
+public_dns_zone = {
+    name    = "gcp-test-pub-zone"
+    dns     = "gcptest-terra.tk."
+}
+
+public_dns_zone_recordset = {
+    name = "dev-vm-pub"
 }

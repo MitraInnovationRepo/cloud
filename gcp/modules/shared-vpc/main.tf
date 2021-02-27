@@ -1,4 +1,4 @@
-#1. Create Host Project and enable the compute API
+#1. Create Host Project and enable the compute API and DNS API
 resource "google_project" "host_project" {
   name            = var.host_project.name
   project_id      = var.host_project.id
@@ -9,6 +9,11 @@ resource "google_project" "host_project" {
 resource "google_project_service" "host_project_service" {
   project = google_project.host_project.project_id
   service = var.enable_compute_api
+}
+
+resource "google_project_service" "host_project_dns_service" {
+  project = google_project.host_project.project_id
+  service = var.enable_dns_api
 }
 
 #2. Create Service Project - DEV and enable the compute API
@@ -118,10 +123,6 @@ resource "google_compute_router" "vpc_router" {
   region  = google_compute_subnetwork.subnet_1.region
   network = google_compute_network.vpc-network.id
   project = google_project.host_project.project_id
-
-  bgp {
-    asn = 64514
-  }
 }
 
 #8. Setup the Cloud NAT
@@ -267,7 +268,7 @@ resource "google_compute_instance" "service_project_public_dev_vm" {
   network_interface {
     network    = google_compute_network.vpc-network.self_link
     subnetwork = google_compute_subnetwork.subnet_3.self_link
-    
+
     access_config {
       // Ephemeral IP
     }
@@ -275,3 +276,26 @@ resource "google_compute_instance" "service_project_public_dev_vm" {
 
   depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev]
 }
+
+#14. Configuring the Cloud DNS - to access the public VM Web Page
+resource "google_dns_managed_zone" "dns_public_dev_vm" {
+  name     = var.public_dns_zone.name
+  dns_name = var.public_dns_zone.dns
+  project  = google_project.host_project.project_id
+
+  depends_on = [google_project_service.host_project_dns_service]
+}
+
+resource "google_dns_record_set" "dns_rec_set_public_dev_vm" {
+  project      = google_project.host_project.project_id
+  name         = join(".", [var.public_dns_zone_recordset.name, google_dns_managed_zone.dns_public_dev_vm.dns_name])
+  type         = "A"
+  ttl          = 300
+  managed_zone = google_dns_managed_zone.dns_public_dev_vm.name
+  rrdatas      = [google_compute_instance.service_project_public_dev_vm.network_interface[0].access_config[0].nat_ip]
+
+  depends_on = [
+    google_compute_instance.service_project_public_dev_vm,
+  google_dns_managed_zone.dns_public_dev_vm]
+}
+

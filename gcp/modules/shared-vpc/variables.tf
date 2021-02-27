@@ -11,6 +11,8 @@ variable "host_project" {
 
 variable "enable_compute_api" {}
 
+variable "enable_dns_api" {}
+
 variable "service_project_dev" {
   type = object({
     name = string
@@ -118,9 +120,9 @@ variable "google_compute_instance_vm_dev" {
 
 variable "subnetwork_public_iam_member" {
   type = object({
-    dev    = string
-    qa     = string
-    role   = string
+    dev  = string
+    qa   = string
+    role = string
   })
 }
 
@@ -134,3 +136,17 @@ variable "google_compute_instance_public_vm_dev" {
     startupscript = string
   })
 }
+
+variable "public_dns_zone" {
+  type = object({
+    name = string
+    dns  = string
+  })
+}
+
+variable "public_dns_zone_recordset" {
+  type = object({
+    name = string
+  })
+}
+

@@ -12,6 +12,8 @@ variable "host_project" {
 
 variable "enable_compute_api" {}
 
+variable "enable_dns_api" {}
+
 variable "service_project_dev" {
   type = object({
     name    = string
@@ -132,5 +134,18 @@ variable "google_compute_instance_public_vm_dev" {
     zone          = string
     image         = string
     startupscript = string
+  })
+}
+
+variable "public_dns_zone" {
+  type = object({
+    name = string
+    dns  = string
+  })
+}
+
+variable "public_dns_zone_recordset" {
+  type = object({
+    name = string
   })
 }

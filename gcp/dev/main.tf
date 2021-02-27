@@ -9,6 +9,7 @@ module "shared_vpc" {
   folder_id                             = var.folder_id
   billing_account_id                    = var.billing_account_id
   enable_compute_api                    = var.enable_compute_api
+  enable_dns_api                        = var.enable_dns_api
   service_project_dev                   = var.service_project_dev
   service_project_qa                    = var.service_project_qa
   vpc_network                           = var.vpc_network
@@ -25,4 +26,6 @@ module "shared_vpc" {
   google_compute_instance_vm_dev        = var.google_compute_instance_vm_dev
   subnetwork_public_iam_member          = var.subnetwork_public_iam_member
   google_compute_instance_public_vm_dev = var.google_compute_instance_public_vm_dev
+  public_dns_zone                       = var.public_dns_zone
+  public_dns_zone_recordset             = var.public_dns_zone_recordset
 }
