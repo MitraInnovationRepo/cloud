@@ -90,14 +90,16 @@ resource "google_compute_subnetwork" "subnet_1" {
   ip_cidr_range = var.subnet_1.cidr
   region        = var.subnet_1.region
   project       = google_project.host_project.project_id
+  private_ip_google_access = true
 }
 
 resource "google_compute_subnetwork" "subnet_2" {
-  name          = var.subnet_2.name
-  network       = google_compute_network.vpc-network.id
-  ip_cidr_range = var.subnet_2.cidr
-  region        = var.subnet_2.region
-  project       = google_project.host_project.project_id
+  name                     = var.subnet_2.name
+  network                  = google_compute_network.vpc-network.id
+  ip_cidr_range            = var.subnet_2.cidr
+  region                   = var.subnet_2.region
+  project                  = google_project.host_project.project_id
+  private_ip_google_access = true
 }
 
 #Setup Public Networks
@@ -240,6 +242,10 @@ resource "google_compute_instance" "service_project_dev_vm" {
     }
   }
 
+  metadata = {
+    BUCKET = "springboot-app-bucket"
+  }
+
   metadata_startup_script = file(var.google_compute_instance_vm_dev.startupscript)
 
   network_interface {
@@ -247,7 +253,7 @@ resource "google_compute_instance" "service_project_dev_vm" {
     subnetwork = google_compute_subnetwork.subnet_1.self_link
   }
 
-  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev]
+  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev, google_storage_bucket_object.springboot_application]
 }
 
 #13. Setup a VM inside one of the Developers Project - Public Subnet
@@ -274,7 +280,7 @@ resource "google_compute_instance" "service_project_public_dev_vm" {
     }
   }
 
-  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev]
+  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev, google_storage_bucket_object.springboot_application]
 }
 
 #14. Configuring the Cloud DNS - to access the public VM Web Page
@@ -299,3 +305,105 @@ resource "google_dns_record_set" "dns_rec_set_public_dev_vm" {
   google_dns_managed_zone.dns_public_dev_vm]
 }
 
+#15. Google Storage Bucket to store the Spring Boot Application JARS
+resource "google_storage_bucket" "springboot_app_bucket" {
+  project       = google_project.host_project.project_id
+  name          = "springboot-app-bucket"
+  location      = "us-east1"
+  force_destroy = true
+
+  lifecycle_rule {
+    condition {
+      age = 3
+    }
+    action {
+      type = "Delete"
+    }
+  }
+}
+
+resource "google_storage_bucket_object" "springboot_application" {
+  name         = "server-info.jar"
+  source       = "../modules/shared-vpc/app-jars/server-info.jar"
+  bucket       = google_storage_bucket.springboot_app_bucket.name
+  content_type = "application/x-java-archive"
+
+  depends_on = [google_storage_bucket.springboot_app_bucket]
+}
+
+resource "google_storage_object_acl" "springboot_application_acl" {
+  bucket = google_storage_bucket.springboot_app_bucket.name
+  object = google_storage_bucket_object.springboot_application.output_name
+
+  role_entity = [
+    "READER:allUsers",
+  ]
+  depends_on = [google_storage_bucket_object.springboot_application]
+}
+
+/* resource "google_storage_bucket_object" "upload_java_distribution" {
+  name         = "jdk-11.tar.xz"
+  source       = "../modules/shared-vpc/distributions/jdk-11.tar.xz"
+  bucket       = google_storage_bucket.springboot_app_bucket.name
+  content_type = "application/x-xz-compressed-tar"
+  depends_on = [google_storage_bucket.springboot_app_bucket, google_storage_bucket_object.springboot_front_app]
+} */
+
+#16. Create a VM Inside the Service Project QA inside the Private Subnet
+resource "google_compute_instance" "service_project_qa_vm" {
+  name         = var.google_compute_instance_vm_qa.name
+  project      = google_project.service_project_qa.project_id
+  machine_type = var.google_compute_instance_vm_qa.machinetype
+  zone         = var.google_compute_instance_vm_qa.zone
+
+  boot_disk {
+    initialize_params {
+      image = var.google_compute_instance_vm_qa.image
+    }
+  }
+
+  metadata = {
+    BUCKET = "springboot-app-bucket"
+  }
+
+  metadata_startup_script = file(var.google_compute_instance_vm_qa.startupscript)
+
+  network_interface {
+    network    = google_compute_network.vpc-network.self_link
+    subnetwork = google_compute_subnetwork.subnet_2.self_link
+  }
+
+  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_qa,
+  google_storage_bucket_object.springboot_application]
+}
+
+#17. Setup a VM inside one of the QA Project - Public Subnet
+resource "google_compute_instance" "service_project_public_qa_vm" {
+  name         = var.google_compute_instance_public_vm_qa.name
+  project      = google_project.service_project_qa.project_id
+  machine_type = var.google_compute_instance_public_vm_qa.machinetype
+  zone         = var.google_compute_instance_public_vm_qa.zone
+
+  boot_disk {
+    initialize_params {
+      image = var.google_compute_instance_public_vm_qa.image
+    }
+  }
+
+  metadata = {
+    BUCKET = "springboot-app-bucket"
+  }
+  
+  metadata_startup_script = file(var.google_compute_instance_public_vm_qa.startupscript)
+
+  network_interface {
+    network    = google_compute_network.vpc-network.self_link
+    subnetwork = google_compute_subnetwork.subnet_4.self_link
+
+    access_config {
+      // Ephemeral IP
+    }
+  }
+
+  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_qa, google_storage_bucket_object.springboot_application]
+}

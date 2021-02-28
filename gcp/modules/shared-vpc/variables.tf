@@ -150,3 +150,22 @@ variable "public_dns_zone_recordset" {
   })
 }
 
+variable "google_compute_instance_vm_qa" {
+  type = object({
+    name          = string
+    machinetype   = string
+    zone          = string
+    image         = string
+    startupscript = string
+  })
+}
+
+variable "google_compute_instance_public_vm_qa" {
+  type = object({
+    name          = string
+    machinetype   = string
+    zone          = string
+    image         = string
+    startupscript = string
+  })
+}

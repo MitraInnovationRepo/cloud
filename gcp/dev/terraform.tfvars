@@ -87,7 +87,7 @@ google_compute_instance_vm_dev = {
     machinetype   = "e2-micro"
     zone          = "us-east1-b"
     image         = "debian-cloud/debian-9"
-    startupscript = "../modules/shared-vpc/vm-scripts-dev.sh"
+    startupscript = "../modules/shared-vpc/scripts/vm-scripts-dev.sh"
 }
 
 subnetwork_public_iam_member = {
@@ -101,7 +101,7 @@ google_compute_instance_public_vm_dev = {
     machinetype   = "e2-micro"
     zone          = "us-east1-b"
     image         = "debian-cloud/debian-9"
-    startupscript = "../modules/shared-vpc/vm-scripts-public-dev.sh"
+    startupscript = "../modules/shared-vpc/scripts/vm-scripts-public-dev.sh"
 }
 
 public_dns_zone = {
@@ -111,4 +111,20 @@ public_dns_zone = {
 
 public_dns_zone_recordset = {
     name = "dev-vm-pub"
+}
+
+google_compute_instance_vm_qa = {
+    name          = "instance-qa"
+    machinetype   = "e2-micro"
+    zone          = "us-east1-b"
+    image         = "debian-cloud/debian-9"
+    startupscript = "../modules/shared-vpc/scripts/vm-scripts-qa.sh"
+}
+
+google_compute_instance_public_vm_qa = {
+    name          = "instance-public-qa"
+    machinetype   = "e2-micro"
+    zone          = "us-east1-b"
+    image         = "debian-cloud/debian-9"
+    startupscript = "../modules/shared-vpc/scripts/vm-scripts-public-qa.sh"
 }
