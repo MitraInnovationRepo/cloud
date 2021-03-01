@@ -59,6 +59,11 @@ terraform init
 terraform plan
 terraform apply
 
+Also to destroy the resources
+terraform destroy
+
+Note that when destroying the Projects will not be Deleted permananetly, due to that if you run the script again within 3-days need to rename to a new one and execute the apply.
+
 6) Scenarios can be verified are as based on the below diagram.
 ```
 ![Scenario Diagram](gcp/modules/shared-vpc/diagrams/google_cloud_shared_vpc_scenarios.png)
