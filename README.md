@@ -60,7 +60,5 @@ terraform plan
 terraform apply
 
 6) Scenarios can be verified are as based on the below diagram.
-
-![Scenario Diagram](gcp/modules/shared-vpc/diagrams/google_cloud_shared_vpc_scenarios.png)
-
 ```
+![Scenario Diagram] (gcp/modules/shared-vpc/diagrams/google_cloud_shared_vpc_scenarios.png)
