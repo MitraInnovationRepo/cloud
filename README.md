@@ -50,7 +50,7 @@ public_dns_zone_recordset = {
     name = "dev-vm-pub"
 }
 
-And can use the https://www.freenom.com/en/index.html?lang=en to configure the name servers and get a domain to test this fuctionality.
+And can use the https://www.freenom.com/en/index.html?lang=en to configure the name servers and get a domain to test this fuctionality. The nemservers generated for this deployment can be fetched from Cloud DNS Configuration
 
 5) Execution
 
