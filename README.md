@@ -6,7 +6,7 @@ This is a Terraform script which can be used to deploy and manage a Shared VPC N
 
 Below is the Architecture Diagram which will be implemented using the Terraform Script.
 
-![Architecture Diagram](cloud/gcp/modules/shared-vpc/diagrams/google_cloud_shared_vpc_architecture.png)
+![Architecture Diagram](gcp/modules/shared-vpc/diagrams/google_cloud_shared_vpc_architecture.png)
 
 ## How to Run
 
@@ -61,6 +61,6 @@ terraform apply
 
 6) Scenarios can be verified are as based on the below diagram.
 
-![Scenario Diagram](cloud/gcp/modules/shared-vpc/diagrams/google_cloud_shared_vpc_scenarios.png)
+![Scenario Diagram](gcp/modules/shared-vpc/diagrams/google_cloud_shared_vpc_scenarios.png)
 
 ```
