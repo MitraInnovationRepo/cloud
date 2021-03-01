@@ -75,8 +75,7 @@ resource "google_compute_network" "vpc-network" {
   name                            = var.vpc_network.name
   auto_create_subnetworks         = "false"
   project                         = google_compute_shared_vpc_host_project.vpc_host_project.project
-  routing_mode                    = var.vpc_network.routing_mode
-  delete_default_routes_on_create = true
+  routing_mode                    = var.vpc_network.routing_mode  
   depends_on = [
     google_compute_shared_vpc_service_project.vpc_service_project_dev,
     google_compute_shared_vpc_service_project.vpc_service_project_qa
@@ -175,7 +174,7 @@ resource "google_compute_subnetwork_iam_member" "subnet_member_dev" {
   region     = google_compute_subnetwork.subnet_1.region
   subnetwork = google_compute_subnetwork.subnet_1.name
   role       = var.subnetwork_iam_member.role
-  member     = var.subnetwork_iam_member.dev
+  member     = var.dev_email
 }
 
 resource "google_compute_subnetwork_iam_member" "subnet_member_qa" {
@@ -183,7 +182,7 @@ resource "google_compute_subnetwork_iam_member" "subnet_member_qa" {
   region     = google_compute_subnetwork.subnet_2.region
   subnetwork = google_compute_subnetwork.subnet_2.name
   role       = var.subnetwork_iam_member.role
-  member     = var.subnetwork_iam_member.qa
+  member     = var.qa_email
 }
 
 resource "google_compute_subnetwork_iam_member" "subnet_public_member_dev" {
@@ -191,7 +190,7 @@ resource "google_compute_subnetwork_iam_member" "subnet_public_member_dev" {
   region     = google_compute_subnetwork.subnet_3.region
   subnetwork = google_compute_subnetwork.subnet_3.name
   role       = var.subnetwork_public_iam_member.role
-  member     = var.subnetwork_public_iam_member.dev
+  member     = var.dev_email
 }
 
 resource "google_compute_subnetwork_iam_member" "subnet_public_member_qa" {
@@ -199,33 +198,33 @@ resource "google_compute_subnetwork_iam_member" "subnet_public_member_qa" {
   region     = google_compute_subnetwork.subnet_4.region
   subnetwork = google_compute_subnetwork.subnet_4.name
   role       = var.subnetwork_public_iam_member.role
-  member     = var.subnetwork_public_iam_member.qa
+  member     = var.qa_email
 }
 
 #10. IAM Binding - Set Permission to the Project 
 resource "google_project_iam_member" "project_member_dev" {
   project = google_project.service_project_dev.project_id
   role    = var.project_iam_member.role
-  member  = var.project_iam_member.dev
+  member  = var.dev_email
 }
 
 resource "google_project_iam_member" "project_member_qa" {
   project = google_project.service_project_qa.project_id
   role    = var.project_iam_member.role
-  member  = var.project_iam_member.qa
+  member  = var.qa_email
 }
 
 #11. Add permissions to the Network Admin - Host Project Owner and Shared VPC Network Admin
 resource "google_project_iam_member" "project_member_host" {
   project = google_project.host_project.project_id
   role    = var.host_project_iam_member.role
-  member  = var.host_project_iam_member.admin
+  member  = var.network_email
 }
 
 resource "google_organization_iam_member" "organization_vpc_admin" {
   org_id = var.org_id
   role   = var.organization_iam_member.role
-  member = var.organization_iam_member.member
+  member = var.network_email
 }
 
 
@@ -243,7 +242,7 @@ resource "google_compute_instance" "service_project_dev_vm" {
   }
 
   metadata = {
-    BUCKET = "springboot-app-bucket"
+    BUCKET = var.bucket_name
   }
 
   metadata_startup_script = file(var.google_compute_instance_vm_dev.startupscript)
@@ -253,7 +252,7 @@ resource "google_compute_instance" "service_project_dev_vm" {
     subnetwork = google_compute_subnetwork.subnet_1.self_link
   }
 
-  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev, google_storage_bucket_object.springboot_application]
+  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev]
 }
 
 #13. Setup a VM inside one of the Developers Project - Public Subnet
@@ -276,11 +275,11 @@ resource "google_compute_instance" "service_project_public_dev_vm" {
     subnetwork = google_compute_subnetwork.subnet_3.self_link
 
     access_config {
-      // Ephemeral IP
+      // External IP Created
     }
   }
 
-  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev, google_storage_bucket_object.springboot_application]
+  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_dev]
 }
 
 #14. Configuring the Cloud DNS - to access the public VM Web Page
@@ -305,8 +304,9 @@ resource "google_dns_record_set" "dns_rec_set_public_dev_vm" {
   google_dns_managed_zone.dns_public_dev_vm]
 }
 
+# The below section is commented as it will be manually created due to the Time out when uploading the JDK Distribution
 #15. Google Storage Bucket to store the Spring Boot Application JARS
-resource "google_storage_bucket" "springboot_app_bucket" {
+/* resource "google_storage_bucket" "springboot_app_bucket" {
   project       = google_project.host_project.project_id
   name          = "springboot-app-bucket"
   location      = "us-east1"
@@ -341,7 +341,7 @@ resource "google_storage_object_acl" "springboot_application_acl" {
   depends_on = [google_storage_bucket_object.springboot_application]
 }
 
-/* resource "google_storage_bucket_object" "upload_java_distribution" {
+resource "google_storage_bucket_object" "upload_java_distribution" {
   name         = "jdk-11.tar.xz"
   source       = "../modules/shared-vpc/distributions/jdk-11.tar.xz"
   bucket       = google_storage_bucket.springboot_app_bucket.name
@@ -363,7 +363,7 @@ resource "google_compute_instance" "service_project_qa_vm" {
   }
 
   metadata = {
-    BUCKET = "springboot-app-bucket"
+    BUCKET = var.bucket_name
   }
 
   metadata_startup_script = file(var.google_compute_instance_vm_qa.startupscript)
@@ -373,8 +373,7 @@ resource "google_compute_instance" "service_project_qa_vm" {
     subnetwork = google_compute_subnetwork.subnet_2.self_link
   }
 
-  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_qa,
-  google_storage_bucket_object.springboot_application]
+  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_qa]
 }
 
 #17. Setup a VM inside one of the QA Project - Public Subnet
@@ -391,7 +390,7 @@ resource "google_compute_instance" "service_project_public_qa_vm" {
   }
 
   metadata = {
-    BUCKET = "springboot-app-bucket"
+    BUCKET = var.bucket_name
   }
 
   metadata_startup_script = file(var.google_compute_instance_public_vm_qa.startupscript)
@@ -401,9 +400,9 @@ resource "google_compute_instance" "service_project_public_qa_vm" {
     subnetwork = google_compute_subnetwork.subnet_4.self_link
 
     access_config {
-      // Ephemeral IP
+      // External IP Created
     }
   }
 
-  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_qa, google_storage_bucket_object.springboot_application]
-} 
+  depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_qa]
+}

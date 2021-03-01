@@ -1,12 +1,18 @@
 credentials           = "credentials.json"
-folder_id             = "573052883711"
+folder_id             = "269929957758"
 billing_account_id    = "018297-9BA585-3D82C2"
 org_id                = "756507711694"
 
+dev_email = "user:dev@mitralabs.co.uk"
+qa_email = "user:qa@mitralabs.co.uk"
+network_email = "user:networkadmin@mitralabs.co.uk"
+
+bucket_name = "distributions-bucket"
+
 host_project          = { 
         name = "ADL - VPCHostProject"
-        id = "adl-vpchostproject-init"
-    }
+        id = "adl-vpchostproject-qa"
+}
 
 enable_compute_api    = "compute.googleapis.com"
 
@@ -14,12 +20,12 @@ enable_dns_api    = "dns.googleapis.com"
 
 service_project_dev   = {
         name = "ADL - VPCServiceProjectDev"
-        id = "adl-vpcserviceprojectdev-init"
+        id = "adl-vpcserviceprojectdev-qa"
 }
 
 service_project_qa   = {
         name = "ADL - VPCServiceProjectQA"
-        id = "adl-vpcserviceprojectqa-init"
+        id = "adl-vpcserviceprojectqa-qa"
 }
 
 vpc_network          = {
@@ -61,25 +67,25 @@ router_nat = {
 }
 
 subnetwork_iam_member = {
-    dev    = "user:dev@mitralabs.co.uk"
-    qa     = "user:qa@mitralabs.co.uk"
+    #dev    = "user:dev@mitralabs.co.uk"
+    #qa     = "user:qa@mitralabs.co.uk"
     role   = "roles/compute.networkUser"
 }
 
 project_iam_member = {
-    dev    = "user:dev@mitralabs.co.uk"
-    qa     = "user:qa@mitralabs.co.uk"
+    #dev    = "user:dev@mitralabs.co.uk"
+    #qa     = "user:qa@mitralabs.co.uk"
     role   = "roles/owner"
 }
 
 host_project_iam_member = {
     role   = "roles/owner"
-    admin  = "user:networkadmin@mitralabs.co.uk"
+    #admin  = "user:networkadmin@mitralabs.co.uk"
 }
 
 organization_iam_member = {
     role   = "roles/compute.xpnAdmin"
-    member  = "user:networkadmin@mitralabs.co.uk"
+    #member  = "user:networkadmin@mitralabs.co.uk"
 }
 
 google_compute_instance_vm_dev = {
@@ -91,8 +97,8 @@ google_compute_instance_vm_dev = {
 }
 
 subnetwork_public_iam_member = {
-    dev    = "user:dev@mitralabs.co.uk"
-    qa     = "user:qa@mitralabs.co.uk"
+    #dev    = "user:dev@mitralabs.co.uk"
+    #qa     = "user:qa@mitralabs.co.uk"
     role   = "roles/compute.networkUser"
 }
 

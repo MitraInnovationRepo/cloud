@@ -30,4 +30,8 @@ module "shared_vpc" {
   public_dns_zone_recordset             = var.public_dns_zone_recordset
   google_compute_instance_vm_qa         = var.google_compute_instance_vm_qa
   google_compute_instance_public_vm_qa  = var.google_compute_instance_public_vm_qa
+  bucket_name                           = var.bucket_name
+  dev_email                             = var.dev_email
+  qa_email                              = var.qa_email
+  network_email                         = var.network_email
 }

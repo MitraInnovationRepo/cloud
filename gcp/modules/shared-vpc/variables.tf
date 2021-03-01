@@ -2,6 +2,10 @@ variable "folder_id" {}
 variable "billing_account_id" {}
 variable "org_id" {}
 
+variable "dev_email" {}
+variable "qa_email" {}
+variable "network_email" {}
+
 variable "host_project" {
   type = object({
     name = string
@@ -80,16 +84,12 @@ variable "router_nat" {
 
 variable "subnetwork_iam_member" {
   type = object({
-    dev  = string
-    qa   = string
     role = string
   })
 }
 
 variable "project_iam_member" {
   type = object({
-    dev  = string
-    qa   = string
     role = string
   })
 }
@@ -97,14 +97,12 @@ variable "project_iam_member" {
 variable "host_project_iam_member" {
   type = object({
     role  = string
-    admin = string
   })
 }
 
 variable "organization_iam_member" {
   type = object({
     role   = string
-    member = string
   })
 }
 
@@ -120,8 +118,6 @@ variable "google_compute_instance_vm_dev" {
 
 variable "subnetwork_public_iam_member" {
   type = object({
-    dev  = string
-    qa   = string
     role = string
   })
 }
@@ -169,3 +165,5 @@ variable "google_compute_instance_public_vm_qa" {
     startupscript = string
   })
 }
+
+variable bucket_name {}
