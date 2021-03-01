@@ -85,11 +85,11 @@ resource "google_compute_network" "vpc-network" {
 
 #6. Setup the Private Subnets
 resource "google_compute_subnetwork" "subnet_1" {
-  name          = var.subnet_1.name
-  network       = google_compute_network.vpc-network.id
-  ip_cidr_range = var.subnet_1.cidr
-  region        = var.subnet_1.region
-  project       = google_project.host_project.project_id
+  name                     = var.subnet_1.name
+  network                  = google_compute_network.vpc-network.id
+  ip_cidr_range            = var.subnet_1.cidr
+  region                   = var.subnet_1.region
+  project                  = google_project.host_project.project_id
   private_ip_google_access = true
 }
 
@@ -162,7 +162,7 @@ resource "google_compute_firewall" "vpc_network_firewall" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22", "80"]
+    ports    = ["22", "80", "8097"]
   }
 
   source_ranges = ["0.0.0.0/0"]
@@ -393,7 +393,7 @@ resource "google_compute_instance" "service_project_public_qa_vm" {
   metadata = {
     BUCKET = "springboot-app-bucket"
   }
-  
+
   metadata_startup_script = file(var.google_compute_instance_public_vm_qa.startupscript)
 
   network_interface {
@@ -406,4 +406,4 @@ resource "google_compute_instance" "service_project_public_qa_vm" {
   }
 
   depends_on = [google_compute_shared_vpc_service_project.vpc_service_project_qa, google_storage_bucket_object.springboot_application]
-}
+} 
