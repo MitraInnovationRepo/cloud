@@ -1,5 +1,5 @@
 credentials           = "credentials.json"
-folder_id             = "269929957758"
+folder_id             = "956712586090"
 billing_account_id    = "018297-9BA585-3D82C2"
 org_id                = "756507711694"
 
@@ -10,8 +10,8 @@ network_email = "user:networkadmin@mitralabs.co.uk"
 bucket_name = "distributions-bucket"
 
 host_project          = { 
-        name = "ADL - VPCHostProject"
-        id = "adl-vpchostproject-qa"
+        name = "VPCHostProject"
+        id = "vpchostproject-demo"
 }
 
 enable_compute_api    = "compute.googleapis.com"
@@ -19,13 +19,13 @@ enable_compute_api    = "compute.googleapis.com"
 enable_dns_api    = "dns.googleapis.com"
 
 service_project_dev   = {
-        name = "ADL - VPCServiceProjectDev"
-        id = "adl-vpcserviceprojectdev-qa"
+        name = "VPCServiceProjectDev"
+        id = "vpcserviceprojectdev-demo"
 }
 
 service_project_qa   = {
-        name = "ADL - VPCServiceProjectQA"
-        id = "adl-vpcserviceprojectqa-qa"
+        name = "VPCServiceProjectQA"
+        id = "vpcserviceprojectqa-demo"
 }
 
 vpc_network          = {

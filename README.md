@@ -21,7 +21,7 @@ networkadmin@mitralabs.co.uk
 3) Login as the Organization Administrator and create a bucket in the Google Cloud Storage as common place to store the Distributions. This is not automated due to a time out concern appeared when uploading the large files. In this case we are using a JDK distribution and JAR file for the Microservice Implemenatation to load to VMs. 
 
 Go to Manage Resources
-Create a Folder adl-poc-dev
+Create a Folder poc-dev
 Inside the Folder create a project for Cloud Storage Project
 Inside the Cloud storage Project - Create a bucket named: distributions-bucket
 Upload the modules/shared-vpc/distributions/jdk-11.tar.xz
