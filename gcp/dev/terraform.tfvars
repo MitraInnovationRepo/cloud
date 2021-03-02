@@ -5,9 +5,9 @@ Copyright © 2021 Mitra Innovation. All rights reserved.
 */
 
 credentials           = "credentials.json"
-folder_id             = "956712586090"
-billing_account_id    = "018297-9BA585-3D82C2"
-org_id                = "756507711694"
+folder_id             = "XXXXXXXXXXXX"
+billing_account_id    = "XXXXXXXXXXXX"
+org_id                = "XXXXXXXXXXXX"
 
 dev_email = "user:dev@mitralabs.co.uk"
 qa_email = "user:qa@mitralabs.co.uk"

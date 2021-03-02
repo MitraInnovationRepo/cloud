@@ -32,8 +32,8 @@ Give the Public Access for all Users
 
 credentials           = "credentials.json"
 folder_id             = "573052883711"
-billing_account_id    = "018297-9BA585-3D82C2"
-org_id                = "756507711694"
+billing_account_id    = "XXXXXXXXX"
+org_id                = "XXXXXXXXX"
 
 dev_email = "user:dev@mitralabs.co.uk"
 qa_email = "user:qa@mitralabs.co.uk"
