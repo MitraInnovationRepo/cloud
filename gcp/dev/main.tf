@@ -1,5 +1,5 @@
 /*
-Author: Ajanthan Elliyathamby
+Author: Ajanthan Eliyathamby
 Project : GCP R&D Lab
 Copyright © 2021 Mitra Innovation. All rights reserved.
 */
