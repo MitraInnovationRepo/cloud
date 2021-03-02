@@ -1,3 +1,9 @@
+/*
+Author: Ajanthan Elliyathamby
+Project : GCP R&D Lab
+Copyright © 2021 Mitra Innovation. All rights reserved.
+*/
+
 #1. Create Host Project and enable the compute API and DNS API
 resource "google_project" "host_project" {
   name            = var.host_project.name

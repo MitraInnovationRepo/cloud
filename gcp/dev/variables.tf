@@ -1,3 +1,9 @@
+/*
+Author: Ajanthan Elliyathamby
+Project : GCP R&D Lab
+Copyright © 2021 Mitra Innovation. All rights reserved.
+*/
+
 variable "credentials" {}
 variable "folder_id" {}
 variable "billing_account_id" {}
